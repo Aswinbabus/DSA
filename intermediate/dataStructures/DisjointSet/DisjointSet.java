@@ -2,10 +2,10 @@ package dataStructures.DisjointSet;
 
 import java.util.Comparator;
 
-public interface DisjointSet<Node extends Comparable<Node>>
+public interface DisjointSet<T>
 {
 
-	void associate(Node a,Node b);
-	boolean checkAssociate(Node a, Node b);
+	void associate(T a,T b);
+	boolean checkAssociate(T a, T b);
 
 }

@@ -1,25 +1,23 @@
-package dataStructures.DisjointSet;
+package dataStructures.DisjointSet.optmialSolution;
 
+import dataStructures.DisjointSet.optmialSolution.DisjointSet;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DisjointSetWithQuickFindTest {
+class DisjointSetTest {
 
 	@Test
-	void testDisjointSetWithQuickFind() {
-		DisjointSetWithQuickFind<Integer> disjointSet = new DisjointSetWithQuickFind<>();
+	void testDisjointSet() {
+		DisjointSet<Integer> disjointSet = new DisjointSet<>();
 
-		// Initialize the disjoint set with nodes
-		disjointSet.initialize(Arrays.asList(1, 2, 3, 4, 5));
-
-		// Test association of two nodes
+		// Test associating two nodes
 		disjointSet.associate(1, 2);
 		assertTrue(disjointSet.checkAssociate(1, 2), "1 and 2 should be in the same set");
 
-		// Test association of another node
+		// Test associating another pair of nodes
 		disjointSet.associate(3, 4);
 		assertTrue(disjointSet.checkAssociate(3, 4), "3 and 4 should be in the same set");
 
@@ -44,25 +42,23 @@ class DisjointSetWithQuickFindTest {
 		assertFalse(disjointSet.checkAssociate(1, 6), "1 and 6 should not be in the same set");
 
 		// Edge Case: Checking association for uninitialized nodes
-		assertThrows(NullPointerException.class, () -> disjointSet.checkAssociate(8, 9), "Should throw exception for uninitialized nodes");
+		assertFalse(disjointSet.checkAssociate(8, 9), "Uninitialized nodes should not be associated");
 
 		// Edge Case: Circular association
 		disjointSet.associate(4, 5);
 		assertTrue(disjointSet.checkAssociate(1, 5), "1 and 5 should now be in the same set due to circular association");
 
 		// Edge Case: Large number of nodes
-		disjointSet.initialize(Arrays.asList(10, 11, 12, 13, 14, 15));
 		disjointSet.associate(10, 11);
 		disjointSet.associate(12, 13);
 		disjointSet.associate(11, 12);
 		assertTrue(disjointSet.checkAssociate(10, 13), "10 and 13 should be in the same set");
 		assertFalse(disjointSet.checkAssociate(10, 14), "10 and 14 should not be in the same set");
-	}
 
-	public static void main(String[] args)
-	{
-		DisjointSetWithQuickFindTest test = new DisjointSetWithQuickFindTest();
-		test.testDisjointSetWithQuickFind();
-		System.out.println("All tests passed!");
+		// Edge Case: Deep hierarchy
+		disjointSet.associate(14, 15);
+		disjointSet.associate(15, 16);
+		disjointSet.associate(16, 17);
+		assertTrue(disjointSet.checkAssociate(14, 17), "14 and 17 should be in the same set");
 	}
 }
