@@ -24,18 +24,26 @@ public class DisjointSetWithQuickFind<Node extends Comparable<Node>> implements 
 	public DisjointSetWithQuickFind()
 	{
 		this.components = new HashMap<>();
+		this.nodeToComponent = new HashMap<>();
 	}
 
 	void initialize(List<Node> nodes) {
-		nodes.forEach(node ->
-		{
-			components.put(node,new HashSet<>());
-			nodeToComponent.put(node,node);
 
-		});
+		if(nodes != null && !nodes.isEmpty())
+		{
+			nodes.forEach(node ->
+			{
+				components.put(node, new HashSet<>());
+				components.get(node).add(node);
+				nodeToComponent.put(node, node);
+
+			});
+		}
 	}
 
 	public void associate(Node nodeA,Node nodeB) {
+
+
 
 		/*
 		Case 1 : Node a and Node b are not associated with any group
@@ -102,20 +110,24 @@ public class DisjointSetWithQuickFind<Node extends Comparable<Node>> implements 
 		 */
 		else {
 
-			Node leader,child = nodeB;
+			if(nodeToComponent.get(nodeA).equals(nodeToComponent.get(nodeB))) {
+				return;
+			}
+
+			Node leader = nodeA,child = nodeB;
 
 			if(nodeA.compareTo(nodeB) > 0) {
 				leader = nodeB;
 				child = nodeA;
 			}
-			else
-			{
-				leader = nodeA;
-			}
 
-			components.get(leader).addAll(components.get(child));
-			components.get(child).forEach(node -> nodeToComponent.put(node,leader));
-			components.remove(child);
+			Node leaderOfLeader = nodeToComponent.get(leader),leaderOfChild = nodeToComponent.get(child);
+			components.get(leaderOfLeader).addAll(components.get(leaderOfChild));
+			for (Node node : components.get(leaderOfChild))
+			{
+				nodeToComponent.put(node, leaderOfLeader);
+			}
+			components.remove(leaderOfChild);
 
 		}
 
