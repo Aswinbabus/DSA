@@ -3,18 +3,49 @@ package dataStructures.DisjointSet.optmialSolution;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DisjointSet<T> implements dataStructures.DisjointSet.DisjointSet<T>
+class ReduntentConnection {
+
+	public int[] findRedundantConnection(int[][] edges) {
+
+		DisjointSetLocal<Integer> set = new DisjointSetLocal<>();
+
+         for(int[] edge : edges) {
+
+			 try
+			 {
+				 if (set.checkAssociate(edge[0], edge[1]))
+				 {
+					 return edge;
+				 }
+				 else {
+					 set.associate(edge[0],edge[1]);
+				 }
+			 }
+			 catch (IllegalArgumentException e) {
+				 // If the edge is not present in the disjoint set, we can associate it
+				 set.associate(edge[0], edge[1]);
+			 }
+
+		 }
+
+		 return new int[]{-1,-1};
+
+	}
+
+}
+
+class DisjointSetLocal<T> implements dataStructures.DisjointSet.DisjointSet<T>
 {
 
 	Map<T,Node> nodes;
 
-	public DisjointSet()
+	public DisjointSetLocal()
 	{
 		this.nodes = new HashMap<>();
 	}
 
 	// Path Compression Strategy
-	public Node findSet(Node node) {
+	private Node findSet(Node node) {
 
 		if(node != node.parent) {
 			node.parent = findSet(node.parent);
@@ -28,8 +59,12 @@ public class DisjointSet<T> implements dataStructures.DisjointSet.DisjointSet<T>
 	public void associate(T a, T b)
 	{
 
-		nodes.putIfAbsent(a, new Node(a));
-		nodes.putIfAbsent(b, new Node(b));
+		nodes.computeIfAbsent(a, (k) ->
+			new Node(a)
+		);
+		nodes.computeIfAbsent(b, (k) ->
+			new Node(b)
+	     );
 		union(a, b);
 
 	}
@@ -54,14 +89,13 @@ public class DisjointSet<T> implements dataStructures.DisjointSet.DisjointSet<T>
 			parent1.rank++;
 		}
 
-
 	}
 
 	@Override
-	public boolean checkAssociate(T a, T b)
+	public boolean checkAssociate(T a, T b) throws IllegalArgumentException
 	{
 		if(!nodes.containsKey(a) || !nodes.containsKey(b))
-			return false;
+			throw new IllegalArgumentException("One or both elements are not present in the disjoint set.");
 
 		return findSet(nodes.get(a)) == findSet(nodes.get(b));
 	}
@@ -78,3 +112,4 @@ public class DisjointSet<T> implements dataStructures.DisjointSet.DisjointSet<T>
 		}
 	}
 }
+
